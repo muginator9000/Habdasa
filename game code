@@ -1,0 +1,168 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Windows.Forms;
+using System.Media;
+using System.ComponentModel;
+namespace final_game_1.game_objects
+{
+
+    class Player : GameObject
+    {
+        public const int playerSize = 40;
+        SoundPlayer sp;
+        private Direction dir;
+        private int score;
+        Image[] ims;
+
+
+
+        public override int getSize()
+        {
+            return playerSize;
+        }
+
+
+        public bool hasWon()
+        {
+            if (score >= 20)
+                return true;
+            else
+                return false;
+        }
+
+        public bool hasDied()
+        {
+            if (score < 0)
+                return true;
+            else
+                return false;
+        }
+
+        public void incrementScore(int monstersKilled)
+        {
+            this.score += monstersKilled;
+        }
+
+        
+
+
+        public Player(int x, int y) : base(x, y)
+        {
+            this.speed = 5;
+            this.score = 0;
+            this.dir = Direction.UP;
+            this.ims = new Image[4];
+            for (int i = 0; i < 4; i++)
+            {
+
+                ims[i] = Image.FromFile(@"F:\mega game project\Final Game\game\sprites\w.png" + i + ".png");
+            }
+            
+        }
+
+
+        public override void draw(Graphics g)
+        {
+           
+
+            g.DrawImage(ims[(int)this.dir], new Point(x, y));
+            g.DrawString("" + this.score, new Font(new FontFamily("Arial"), 16), Brushes.White, new PointF(x, y));
+
+
+        }
+
+
+        public void move(Direction command, int limitX, int limitY)
+        {
+            int nwX = this.X; int nwY = this.Y;
+            this.dir = command;
+
+            switch (command)
+            {
+                case Direction.UP:
+                    nwY -= speed;
+                    break;
+                case Direction.DOWN:
+                    nwY += speed;
+                    break;
+                case Direction.LEFT:
+                    nwX -= speed;
+                    break;
+                case Direction.RIGHT:
+                    nwX += speed;
+                    break;
+
+            }
+
+            if (!collideWithBounds(nwX, nwY, limitX, limitY))
+            {
+                this.X = nwX;
+                this.Y = nwY;
+            }
+        }
+        class Monster : GameObject
+        {
+            public const int monsterSize = 40;
+            Image im;
+            public Monster(int x, int y)
+                : base(x, y)
+            {
+                speed = 1;
+                im = Image.FromFile(@"F:\mega game project\Final Game\game\sprites\m.png");
+            }
+
+            public override int getSize()
+            {
+                return monsterSize;
+            }
+
+
+            public override void draw(Graphics g)
+            {
+                g.DrawImage(im, x, y);
+            }
+
+
+            public void moveToPlayer(Player p, int limitX, int limitY)
+            {
+                int distX = p.X - this.X;
+                int distY = p.Y - this.Y;
+
+
+                int nwX = this.X + speed * Math.Sign(distX);
+                int nwY = this.Y + speed * Math.Sign(distY);
+                if (!collideWithBounds(nwX, nwY, limitX, limitY))
+                {
+                    this.X = nwX;
+                    this.Y = nwY;
+                }
+
+            }
+
+
+
+
+
+
+        }
+        class Program
+    {
+        static void Main(string[] args)
+        {
+                 [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new GameForm());
+        }
+        }
+    }
+}
+ 
