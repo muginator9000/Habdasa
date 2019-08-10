@@ -1,0 +1,76 @@
+using System;
+using System.Drawing;
+
+namespace final_game_1.game_objects
+{
+    public enum Direction
+    {
+        UP, DOWN, LEFT, RIGHT
+    }
+    public abstract class GameObject
+    {
+        protected int x, y;
+        protected int speed;
+        public int X
+        {
+            get { return x; }
+            set { x = value; }
+        }
+        public int Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
+
+
+        public GameObject(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+
+        public abstract int getSize();
+
+        protected bool collideWithBounds(int nwX, int nwY, int limitX, int limitY)
+        {
+            if (nwX < 0 || nwX > limitX - this.getSize() ||
+                nwY < 0 || nwY > limitY - this.getSize())
+                return true;
+            else
+                return false;
+
+        }
+
+
+        public abstract void draw(Graphics g);
+
+
+
+
+        public static bool checkCollision(GameObject gameObj1, GameObject gameObj2)
+        {
+            //obj1 center
+            double center_x1 = gameObj1.X + gameObj1.getSize() / 2.0;
+            double center_y1 = gameObj1.Y + gameObj1.getSize() / 2.0;
+
+            //obj2 center
+            double center_x2 = gameObj2.X + gameObj2.getSize() / 2.0;
+            double center_y2 = gameObj2.Y + gameObj2.getSize() / 2.0;
+
+
+            double dist =
+                Math.Sqrt(Math.Pow(center_x1 - center_x2, 2)
+                        + Math.Pow(center_y1 - center_y2, 2));
+
+
+            return (dist <= (gameObj1.getSize() / 2.0 + gameObj2.getSize() / 2.0));
+
+        }
+
+
+
+
+
+    }
+}
